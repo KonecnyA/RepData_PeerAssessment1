@@ -6,6 +6,8 @@ December 8, 2016
 
 ## 1. Synopsis ##
 
+Please note, based on peer review, I have corrected sections: 3.1, 3.2, 3.6 & 3.7.  I now better understand "histogram".
+
 It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a [Fitbit](http://www.fitbit.com/ "Fitbit"), [Nike Fuelband](http://www.nike.com/us/en_us/c/nikeplus-fuelband "Nike Fuleband"), or [Jawbone Up](https://jawbone.com/up "Jawbone Up") . These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
 
 ## 2. Data Processing ##
@@ -97,84 +99,27 @@ What is the difference between a histogram and a barplot? In a nutshell histogra
 
 ```r
 ## Make a histogram of the total number of steps taken each day.
-ggplot(data = df.statistics.steps.by.date.nomissing, aes(x = ymd, y = steps.sum)) +
-geom_bar(stat = "identity", fill = "steelblue") +
-ggtitle("Total number of steps by Date (2012)") +
-xlab("Date") +
-theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
-ylab("Total steps (no missing)")
+hist(df.statistics.steps.by.date.nomissing$steps.sum,
+     main = "Steps Taken Per Day (Oct. to Nov. 2012) No Missing",
+     xlab = "Total Steps Taken in a Day",
+     col = "steelblue")
 ```
 
 ![](PA1_template_files/figure-html/nomissing.histogram-1.png)<!-- -->
 
-Of interest, one can see from the histogram that for some of the dates between October 1st, 2012 to November 30th, 2012 there are no observations.
+Of interest, we can see from the plot that the mean and median will fall between 10,000 to 15,000 total steps per day.
 
 ### 3.2 Report the mean and median total steps per day. ###
 
 ```r
-##knitr::kable(subset(df.statistics.steps.by.date.nomissing, select= -c(steps.sum)), digits = 2, padding = 0)
+## Calculate the mean.
+tspd.mean <- as.integer(mean(df.statistics.steps.by.date.nomissing$steps.sum))
 
-subset(df.statistics.steps.by.date.nomissing, select = -steps.sum)
+## Calculate the median.
+tspd.median <- as.integer(median(df.statistics.steps.by.date.nomissing$steps.sum))
 ```
 
-```
-##           ymd steps.mean steps.median
-## 1  2012-10-02  0.4375000            0
-## 2  2012-10-03 39.4166667            0
-## 3  2012-10-04 42.0694444            0
-## 4  2012-10-05 46.1597222            0
-## 5  2012-10-06 53.5416667            0
-## 6  2012-10-07 38.2465278            0
-## 7  2012-10-09 44.4826389            0
-## 8  2012-10-10 34.3750000            0
-## 9  2012-10-11 35.7777778            0
-## 10 2012-10-12 60.3541667            0
-## 11 2012-10-13 43.1458333            0
-## 12 2012-10-14 52.4236111            0
-## 13 2012-10-15 35.2048611            0
-## 14 2012-10-16 52.3750000            0
-## 15 2012-10-17 46.7083333            0
-## 16 2012-10-18 34.9166667            0
-## 17 2012-10-19 41.0729167            0
-## 18 2012-10-20 36.0937500            0
-## 19 2012-10-21 30.6284722            0
-## 20 2012-10-22 46.7361111            0
-## 21 2012-10-23 30.9652778            0
-## 22 2012-10-24 29.0104167            0
-## 23 2012-10-25  8.6527778            0
-## 24 2012-10-26 23.5347222            0
-## 25 2012-10-27 35.1354167            0
-## 26 2012-10-28 39.7847222            0
-## 27 2012-10-29 17.4236111            0
-## 28 2012-10-30 34.0937500            0
-## 29 2012-10-31 53.5208333            0
-## 30 2012-11-02 36.8055556            0
-## 31 2012-11-03 36.7048611            0
-## 32 2012-11-05 36.2465278            0
-## 33 2012-11-06 28.9375000            0
-## 34 2012-11-07 44.7326389            0
-## 35 2012-11-08 11.1770833            0
-## 36 2012-11-11 43.7777778            0
-## 37 2012-11-12 37.3784722            0
-## 38 2012-11-13 25.4722222            0
-## 39 2012-11-15  0.1423611            0
-## 40 2012-11-16 18.8923611            0
-## 41 2012-11-17 49.7881944            0
-## 42 2012-11-18 52.4652778            0
-## 43 2012-11-19 30.6979167            0
-## 44 2012-11-20 15.5277778            0
-## 45 2012-11-21 44.3993056            0
-## 46 2012-11-22 70.9270833            0
-## 47 2012-11-23 73.5902778            0
-## 48 2012-11-24 50.2708333            0
-## 49 2012-11-25 41.0902778            0
-## 50 2012-11-26 38.7569444            0
-## 51 2012-11-27 47.3819444            0
-## 52 2012-11-28 35.3576389            0
-## 53 2012-11-29 24.4687500            0
-```
-
-Of interest, the median for all observations is 0.  This implies that 50 percent or more of the measurements are zero on any given day.
+So the mean total steps per day is 10766 and the median total steps per day is 10765.
 
 ### 3.3 What is the average daily activity pattern? ###
 
@@ -241,105 +186,27 @@ df.statistics.steps.by.interval.imputed <- summaryBy(steps ~ interval + ymd,
 
 ```r
 ## Make a histogram of the total number of steps taken each day.
-ggplot(data = df.statistics.steps.by.date.imputed, aes(x = ymd, y = steps.sum)) +
-geom_bar(stat = "identity", fill = "steelblue") +
-ggtitle("Total number of steps by Date (2012)") +
-xlab("Date") +
-theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
-ylab("Total steps (imputed)")
+hist(df.statistics.steps.by.date.imputed$steps.sum,
+     main = "Steps Taken Per Day (Oct. to Nov. 2012) Imputed",
+     xlab = "Total Steps Taken in a Day",
+     col = "steelblue")
 ```
 
 ![](PA1_template_files/figure-html/impute.histogram-1.png)<!-- -->
 
-Of interest, one can see from the histogram that the missing dates now have observations and the bars for the other dates look identical to those previously plotted.
+Of interest, one can see that this histogram is very similar to the initial plot with no missing and no imputed data. This suggests the imputed mean and meadian will be close to the original.
 
 ### 3.7 Report the mean and median total steps per day after missing values are imputed ###
 
 ```r
-## Report the mean and median total number of steps taken per day.
-##knitr::kable(subset(df.statistics.steps.by.date.imputed, select = -c(steps.sum)), digits = 2, padding = 0)
+## Calculate the mean.
+tspd.mean <- as.integer(mean(df.statistics.steps.by.date.imputed$steps.sum))
 
-subset(df.statistics.steps.by.date.imputed, select=-steps.sum)
+## Calculate the median.
+tspd.median <- as.integer(median(df.statistics.steps.by.date.imputed$steps.sum))
 ```
 
-```
-##           ymd steps.mean steps.median
-## 1  2012-10-01 37.3825996     34.11321
-## 2  2012-10-02  0.4375000      0.00000
-## 3  2012-10-03 39.4166667      0.00000
-## 4  2012-10-04 42.0694444      0.00000
-## 5  2012-10-05 46.1597222      0.00000
-## 6  2012-10-06 53.5416667      0.00000
-## 7  2012-10-07 38.2465278      0.00000
-## 8  2012-10-08 37.3825996     34.11321
-## 9  2012-10-09 44.4826389      0.00000
-## 10 2012-10-10 34.3750000      0.00000
-## 11 2012-10-11 35.7777778      0.00000
-## 12 2012-10-12 60.3541667      0.00000
-## 13 2012-10-13 43.1458333      0.00000
-## 14 2012-10-14 52.4236111      0.00000
-## 15 2012-10-15 35.2048611      0.00000
-## 16 2012-10-16 52.3750000      0.00000
-## 17 2012-10-17 46.7083333      0.00000
-## 18 2012-10-18 34.9166667      0.00000
-## 19 2012-10-19 41.0729167      0.00000
-## 20 2012-10-20 36.0937500      0.00000
-## 21 2012-10-21 30.6284722      0.00000
-## 22 2012-10-22 46.7361111      0.00000
-## 23 2012-10-23 30.9652778      0.00000
-## 24 2012-10-24 29.0104167      0.00000
-## 25 2012-10-25  8.6527778      0.00000
-## 26 2012-10-26 23.5347222      0.00000
-## 27 2012-10-27 35.1354167      0.00000
-## 28 2012-10-28 39.7847222      0.00000
-## 29 2012-10-29 17.4236111      0.00000
-## 30 2012-10-30 34.0937500      0.00000
-## 31 2012-10-31 53.5208333      0.00000
-## 32 2012-11-01 37.3825996     34.11321
-## 33 2012-11-02 36.8055556      0.00000
-## 34 2012-11-03 36.7048611      0.00000
-## 35 2012-11-04 37.3825996     34.11321
-## 36 2012-11-05 36.2465278      0.00000
-## 37 2012-11-06 28.9375000      0.00000
-## 38 2012-11-07 44.7326389      0.00000
-## 39 2012-11-08 11.1770833      0.00000
-## 40 2012-11-09 37.3825996     34.11321
-## 41 2012-11-10 37.3825996     34.11321
-## 42 2012-11-11 43.7777778      0.00000
-## 43 2012-11-12 37.3784722      0.00000
-## 44 2012-11-13 25.4722222      0.00000
-## 45 2012-11-14 37.3825996     34.11321
-## 46 2012-11-15  0.1423611      0.00000
-## 47 2012-11-16 18.8923611      0.00000
-## 48 2012-11-17 49.7881944      0.00000
-## 49 2012-11-18 52.4652778      0.00000
-## 50 2012-11-19 30.6979167      0.00000
-## 51 2012-11-20 15.5277778      0.00000
-## 52 2012-11-21 44.3993056      0.00000
-## 53 2012-11-22 70.9270833      0.00000
-## 54 2012-11-23 73.5902778      0.00000
-## 55 2012-11-24 50.2708333      0.00000
-## 56 2012-11-25 41.0902778      0.00000
-## 57 2012-11-26 38.7569444      0.00000
-## 58 2012-11-27 47.3819444      0.00000
-## 59 2012-11-28 35.3576389      0.00000
-## 60 2012-11-29 24.4687500      0.00000
-## 61 2012-11-30 37.3825996     34.11321
-```
-
-```r
-## Do these values differ from the estimates from the first part of the assignment?
-## What is the impact of imputing missing data on the estimates of the total daily number of steps?
-```
-
-In building this report, I iteratively explored the no missing and imputed data frames.
-
-- The no missing has 53 observations (some dates missing from Oct 1 to Nov 30).
-- The imputed has 61 observations which means that all the dates are covered.
-- For the 53 dates that had data, the data is identical on the imputed data frame.
-- 8 days have been imputed and they are identical (based on methodology).
-- The Total steps over the period would increase due to the addition of 8 days.
-- A final artifact is that there is now a median for these 8 days because there is no 0 observations. (weakness of simple imputation method).
+So the imputed mean total steps per day is 10766 and the imputed median total steps per day is 10766. Imputation added 8 missing days of data. Both these measures (mean and median) are almost identical to what they were before.  This is probably an artifact of my impute strategy which replaced missings days with with mean total steps for each interval. With the addition of 8 days of data, were you to total steps across all 61 days, this total would be higher than over the 53 days of original data.
 
 ### 3.8 Are there differences in activity patterns between weekdays and weekends? ###
 
